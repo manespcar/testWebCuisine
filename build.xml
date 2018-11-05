@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="buildwar" default="deploy" basedir=".">
+    <description> Compile, Package and Deploy project testWebCuisine</description>
+    <!-- set global properties for this build -->
+    <property name="src" location="./src" />
+    <property name="classes" location="./build/classes" />
+    <property name="deployDest" location="C:\apache-tomcat-8.5.34\webapps" />
+
+    <path id="project-classpath">
+        <!-- Libraries inside project lib folder like, Spring, Logging, Hibernate -->
+        <fileset dir="C:\workspace\testWebCuisine\target\poll-0.0.1-SNAPSHOT\WEB-INF\lib" includes="*.jar" />
+        <!-- Libraries inside server lib folder like, Servlet, JSP -->
+        <fileset dir="C:\apache-tomcat-8.5.34\lib" includes="*.jar" />
+    </path>
+
+    <target name="clean">
+        <delete dir="./build/classes">
+        </delete>
+        <echo> Cleaned old class files !</echo>
+        <delete>
+            <fileset dir="./build">
+                <include name="*.war" />
+            </fileset>
+        </delete>
+        <echo> Cleaned old war file in build folder !</echo>
+    </target>
+
+    <target name="cleanDeploy">
+        <delete>
+            <fileset dir="${deployDest}">
+                <include name="*.war" />
+                <exclude name="*/*.*" />
+            </fileset>
+        </delete>
+        <echo> Removed war files inside Server!</echo>
+        <delete dir="${deployDest}/testWebCuisine">
+        </delete>
+        <echo> Removed Previous Deployment inside Server!</echo>
+    </target>
+    <target name="compile" depends="clean" description="compile the source">
+        <mkdir dir="./build/classes" />
+        <javac includeantruntime="false" srcdir="${src}" destdir="${classes}" classpathref="project-classpath" />
+        <echo> Java file compiled and copied to classes folder !</echo>
+    </target>
+    <target name="buildwar" description="Building War File" depends="compile">
+        <war destfile="./build/testWebCuisine.war" needxmlfile="false">
+            <classes dir="./build/classes" />
+        </war>
+    </target>
+    <target name="deploy" depends="buildwar,cleanDeploy">
+        <copy file="./build/testWebCuisine.war" todir="${deployDest}" overwrite="true">
+        </copy>
+    </target>
+
+</project>
